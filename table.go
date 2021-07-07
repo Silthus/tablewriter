@@ -84,6 +84,7 @@ type Table struct {
 	columnsParams           []string
 	footerParams            []string
 	columnsAlign            []int
+	count                   int
 }
 
 // Start New Table
@@ -121,6 +122,30 @@ func NewWriter(writer io.Writer) *Table {
 		footerParams:  []string{},
 		columnsAlign:  []int{}}
 	return t
+}
+
+func (t *Table) RenderHeaders() {
+	t.printHeading()
+}
+
+//  Render with out Headers
+func (t *Table) RenderWithoutHeaders() {
+	if t.borders.Top {
+		t.printLine(true)
+	}
+	if t.autoMergeCells {
+		t.printRowsMergeCells()
+	} else {
+		t.printRows()
+	}
+	if !t.rowLine && t.borders.Bottom {
+		t.printLine(true)
+	}
+	t.printFooter()
+
+	if t.caption {
+		t.printCaption()
+	}
 }
 
 // Render table output
