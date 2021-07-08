@@ -124,11 +124,18 @@ func NewWriter(writer io.Writer) *Table {
 	return t
 }
 
+// Print only headers
 func (t *Table) RenderHeaders() {
 	if t.borders.Top {
 		t.printLine(true)
 	}
 	t.printHeading()
+}
+
+// Clear rows and max hight 
+func (t *Table) ClearAll() {
+	t.ClearRows()
+	t.rs[0] = 0
 }
 
 //  Render with out Headers
