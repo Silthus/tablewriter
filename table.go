@@ -125,14 +125,14 @@ func NewWriter(writer io.Writer) *Table {
 }
 
 func (t *Table) RenderHeaders() {
+	if t.borders.Top {
+		t.printLine(true)
+	}
 	t.printHeading()
 }
 
 //  Render with out Headers
 func (t *Table) RenderWithoutHeaders() {
-	if t.borders.Top {
-		t.printLine(true)
-	}
 	if t.autoMergeCells {
 		t.printRowsMergeCells()
 	} else {
