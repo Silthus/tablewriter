@@ -132,10 +132,11 @@ func (t *Table) RenderHeaders() {
 	t.printHeading()
 }
 
-// Clear rows and max hight 
+// ClearAll rows and max height
 func (t *Table) ClearAll() {
 	t.ClearRows()
-	t.rs[0] = 0
+	t.rs = make(map[int]int)
+	t.cs = make(map[int]int)
 }
 
 //  Render with out Headers
