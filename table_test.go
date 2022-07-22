@@ -10,7 +10,6 @@ package tablewriter
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"os"
 	"reflect"
 	"strings"
@@ -63,8 +62,19 @@ func ExampleTable() {
 
 	table := NewWriter(os.Stdout)
 	table.SetHeader([]string{"Name", "Sign", "Rating"})
-	table.SetCenterSeparator("*")
-	table.SetRowSeparator("=")
+	table.SetBorderSymbols(BorderSymbols{
+		Horizontal:  "=",
+		Vertical:    "|",
+		Center:      "*",
+		Top:         "*",
+		TopRight:    "*",
+		Right:       "*",
+		BottomRight: "*",
+		Bottom:      "*",
+		BottomLeft:  "*",
+		Left:        "*",
+		TopLeft:     "*",
+	})
 
 	for _, v := range data {
 		table.Append(v)
@@ -84,8 +94,19 @@ func ExampleTable() {
 
 func ExampleNewCSV() {
 	table, _ := NewCSV(os.Stdout, "testdata/test.csv", true)
-	table.SetCenterSeparator("*")
-	table.SetRowSeparator("=")
+	table.SetBorderSymbols(BorderSymbols{
+		Horizontal:  "=",
+		Vertical:    "|",
+		Center:      "*",
+		Top:         "*",
+		TopRight:    "*",
+		Right:       "*",
+		BottomRight: "*",
+		Bottom:      "*",
+		BottomLeft:  "*",
+		Left:        "*",
+		TopLeft:     "*",
+	})
 
 	table.Render()
 
@@ -148,9 +169,19 @@ func TestCSVSeparator(t *testing.T) {
 		return
 	}
 	table.SetRowLine(true)
-	table.SetCenterSeparator("+")
-	table.SetColumnSeparator("|")
-	table.SetRowSeparator("-")
+	table.SetBorderSymbols(BorderSymbols{
+		Horizontal:  "-",
+		Vertical:    "|",
+		Center:      "+",
+		Top:         "+",
+		TopRight:    "+",
+		Right:       "+",
+		BottomRight: "+",
+		Bottom:      "+",
+		BottomLeft:  "+",
+		Left:        "+",
+		TopLeft:     "+",
+	})
 	table.SetAlignment(ALIGN_LEFT)
 	table.Render()
 
@@ -253,7 +284,19 @@ func TestPrintingInMarkdown(t *testing.T) {
 	table.SetHeader([]string{"Date", "Description", "CV2", "Amount"})
 	table.AppendBulk(data) // Add Bulk Data
 	table.SetBorders(Border{Left: true, Top: false, Right: true, Bottom: false})
-	table.SetCenterSeparator("|")
+	table.SetBorderSymbols(BorderSymbols{
+		Horizontal:  "-",
+		Vertical:    "|",
+		Center:      "|",
+		Top:         "|",
+		TopRight:    "|",
+		Right:       "|",
+		BottomRight: "|",
+		Bottom:      "|",
+		BottomLeft:  "|",
+		Left:        "|",
+		TopLeft:     "|",
+	})
 	table.Render()
 
 	want := `|   DATE   |       DESCRIPTION        | CV2  | AMOUNT |
@@ -701,75 +744,6 @@ string with some lines being really long.`
 	// +-----+--------------------------------+
 }
 
-func TestPrintLine(t *testing.T) {
-	header := make([]string, 12)
-	val := " "
-	want := ""
-	for i := range header {
-		header[i] = val
-		want = fmt.Sprintf("%s+-%s-", want, strings.Replace(val, " ", "-", -1))
-		val = val + " "
-	}
-	want = want + "+"
-	var buf bytes.Buffer
-	table := NewWriter(&buf)
-	table.SetHeader(header)
-	table.printLine(false)
-	checkEqual(t, buf.String(), want, "line rendering failed")
-}
-
-func TestAnsiStrip(t *testing.T) {
-	header := make([]string, 12)
-	val := " "
-	want := ""
-	for i := range header {
-		header[i] = "\033[43;30m" + val + "\033[00m"
-		want = fmt.Sprintf("%s+-%s-", want, strings.Replace(val, " ", "-", -1))
-		val = val + " "
-	}
-	want = want + "+"
-	var buf bytes.Buffer
-	table := NewWriter(&buf)
-	table.SetHeader(header)
-	table.printLine(false)
-	checkEqual(t, buf.String(), want, "line rendering failed")
-}
-
-func NewCustomizedTable(out io.Writer) *Table {
-	table := NewWriter(out)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetBorder(false)
-	table.SetAlignment(ALIGN_LEFT)
-	table.SetHeader([]string{})
-	return table
-}
-
-func TestSubclass(t *testing.T) {
-	buf := new(bytes.Buffer)
-	table := NewCustomizedTable(buf)
-
-	data := [][]string{
-		{"A", "The Good", "500"},
-		{"B", "The Very very Bad Man", "288"},
-		{"C", "The Ugly", "120"},
-		{"D", "The Gopher", "800"},
-	}
-
-	for _, v := range data {
-		table.Append(v)
-	}
-	table.Render()
-
-	want := `  A  The Good               500  
-  B  The Very very Bad Man  288  
-  C  The Ugly               120  
-  D  The Gopher             800  
-`
-	checkEqual(t, buf.String(), want, "test subclass failed")
-}
-
 func TestAutoMergeRows(t *testing.T) {
 	data := [][]string{
 		{"A", "The Good", "500"},
@@ -1162,9 +1136,19 @@ func TestKubeFormat(t *testing.T) {
 	table.SetAutoFormatHeaders(true)
 	table.SetHeaderAlignment(ALIGN_LEFT)
 	table.SetAlignment(ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
+	table.SetBorderSymbols(BorderSymbols{
+		Horizontal:  "",
+		Vertical:    "",
+		Center:      "",
+		Top:         "",
+		TopRight:    "",
+		Right:       "",
+		BottomRight: "",
+		Bottom:      "",
+		BottomLeft:  "",
+		Left:        "",
+		TopLeft:     "",
+	})
 	table.SetHeaderLine(false)
 	table.SetBorder(false)
 	table.SetTablePadding("\t") // pad with tabs
