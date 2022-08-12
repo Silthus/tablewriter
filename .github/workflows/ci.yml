@@ -64,7 +64,6 @@ jobs:
       - run: go build
       - uses: go-semantic-release/action@v1
         with:
-          hooks: goreleaser
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
