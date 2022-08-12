@@ -166,7 +166,7 @@ func (t *Table) RenderWithoutHeaders() {
 	if t.autoMergeCells {
 		t.printRowsMergeCells()
 	} else {
-		t.printRows()
+		dataLines = t.printRows()
 	}
 	if !t.rowLine && t.borders.Bottom {
 		t.printBottomLine()
