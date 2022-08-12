@@ -146,7 +146,7 @@ func NewWriter(writer io.Writer) *Table {
 	return t
 }
 
-// Print only headers
+// RenderHeaders prints only the headers without the body
 func (t *Table) RenderHeaders() {
 	if t.borders.Top {
 		t.printTopLine()
@@ -161,8 +161,10 @@ func (t *Table) ClearAll() {
 	t.cs = make(map[int]int)
 }
 
-//  Render with out Headers
-func (t *Table) RenderWithoutHeaders() {
+// RenderWithoutHeaders renders only the body of the table
+func (t *Table) RenderWithoutHeaders() int {
+	dataLines := 0
+
 	if t.autoMergeCells {
 		t.printRowsMergeCells()
 	} else {
@@ -176,6 +178,8 @@ func (t *Table) RenderWithoutHeaders() {
 	if t.caption {
 		t.printCaption()
 	}
+
+	return dataLines
 }
 
 // Render table output, returns the number of lines of data (includes any newline that the table wraps).
@@ -183,7 +187,7 @@ func (t *Table) Render() int {
 	dataLines := 0
 
 	if t.borders.Top {
-		t.printLine(true)
+		t.printLine(true, false)
 	}
 	t.printHeading()
 	if t.autoMergeCells {
@@ -192,7 +196,7 @@ func (t *Table) Render() int {
 		dataLines = t.printRows()
 	}
 	if !t.rowLine && t.borders.Bottom {
-		t.printLine(true)
+		t.printLine(false, true)
 	}
 	t.printFooter()
 
@@ -837,7 +841,7 @@ func (t *Table) printFooter() {
 }
 
 // Print caption text
-func (t Table) printCaption() {
+func (t *Table) printCaption() {
 	width := t.getTableWidth()
 	paragraph, _ := WrapString(t.captionText, width)
 	for linecount := 0; linecount < len(paragraph); linecount++ {
@@ -846,7 +850,7 @@ func (t Table) printCaption() {
 }
 
 // Calculate the total number of characters in a row
-func (t Table) getTableWidth() int {
+func (t *Table) getTableWidth() int {
 	var chars int
 	for _, v := range t.cs {
 		chars += v
@@ -860,7 +864,7 @@ func (t Table) getTableWidth() int {
 	return (chars + (3 * t.colSize) + 2)
 }
 
-func (t Table) printRows() int {
+func (t *Table) printRows() int {
 	rows := 0
 	for i, lines := range t.lines {
 		rows += t.printRow(lines, i)
