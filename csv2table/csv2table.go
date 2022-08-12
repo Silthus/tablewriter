@@ -8,7 +8,7 @@ import (
 	"os"
 	"unicode/utf8"
 
-	"github.com/Anton-Rampage/tablewriter"
+	"github.com/silthus/tablewriter"
 )
 
 var (
@@ -27,7 +27,7 @@ func main() {
 		process(os.Stdin)
 	} else {
 		if *fileName == "" {
-			fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+			_, _ = fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
 			flag.PrintDefaults()
 			fmt.Println()
 			os.Exit(1)
@@ -55,11 +55,11 @@ func processFile() {
 }
 func process(r io.Reader) {
 	csvReader := csv.NewReader(r)
-	rune, size := utf8.DecodeRuneInString(*delimiter)
+	ru, size := utf8.DecodeRuneInString(*delimiter)
 	if size == 0 {
-		rune = ','
+		ru = ','
 	}
-	csvReader.Comma = rune
+	csvReader.Comma = ru
 
 	table, err := tablewriter.NewCSVReader(os.Stdout, csvReader, *header)
 
@@ -80,6 +80,6 @@ func process(r io.Reader) {
 }
 
 func exit(err error) {
-	fmt.Fprintf(os.Stderr, "#Error : %s", err)
+	_, _ = fmt.Fprintf(os.Stderr, "#Error : %s", err)
 	os.Exit(1)
 }
