@@ -18,7 +18,12 @@ import (
 var ansi = regexp.MustCompile("\033\\[(?:[0-9]{1,3}(?:;[0-9]{1,3})*)?[m|K]")
 
 func DisplayWidth(str string) int {
-	return runewidth.StringWidth(ansi.ReplaceAllLiteralString(str, ""))
+	strRune := []rune(str)
+	var res int
+	for _, r := range strRune {
+		res += runewidth.RuneWidth(r)
+	}
+	return res
 }
 
 // Simple Condition for string
